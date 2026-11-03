@@ -3,7 +3,7 @@
 Todas as mudanças relevantes deste pacote, no formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/),
 com versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
-## [Não lançado]
+## [0.16.0] — 2026-11-03
 ### Corrigido
 - **P0** Template de CI: gatilho `workflow_dispatch` + tags `hml-*`/`v*`, `concurrency`, base = tag anterior; job `test-kit` deixou de ser um `echo` verde: falha (`exit 1`) até o CLI do projeto ser ligado.
 - **P0** `check-diff.sh`: `HEAD`/`--cached` comparam o INDEX (hook pre-commit era no-op); base == HEAD reprova. Hook usa `--cached`. Testes vermelhos plantados.
