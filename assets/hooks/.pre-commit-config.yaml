@@ -10,6 +10,6 @@ repos:
         pass_filenames: false
       - id: standards-gate
         name: gate de padrões no diff (§35/§37)
-        entry: bash .claude/skills/schematize-node/scripts/check-diff.sh HEAD
+        entry: bash .claude/skills/schematize-node/scripts/check-diff.sh --cached
         language: system
         pass_filenames: false

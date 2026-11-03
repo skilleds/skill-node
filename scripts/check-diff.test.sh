@@ -65,5 +65,12 @@ new_repo; printf 'let a: any = 1\nlet b: any = 2\n' > m.ts; commit_feat
 out=$(gate); n=$(grep -c 'tipo silenciado' <<<"$out")
 if [ "$n" -eq 2 ]; then echo "  ok  2 achados"; else echo "  FALHOU achados=$n"; rc=1; fi
 
+echo "── P0-5: hook pré-commit (HEAD) olha o INDEX; base == HEAD reprova"
+new_repo; printf 'let a: any = 1\n' > staged.ts; git add -A
+out=$(gate HEAD); expect "staged violador bloqueado pelo hook" 1 $? "$out" "tipo silenciado"
+git reset -q; rm -f staged.ts
+out=$(gate HEAD); expect "nada staged passa" 0 $? "$out"
+out=$(gate "$(git rev-parse HEAD)"); expect "base == HEAD reprova" 1 $? "$out" "== HEAD"
+
 [ "$rc" -eq 0 ] && echo "check-diff.test: OK" || echo "check-diff.test: FALHOU"
 exit "$rc"

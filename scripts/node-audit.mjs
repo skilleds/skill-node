@@ -31,7 +31,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 // Fim de suporte por major do Node (fonte: github.com/nodejs/Release/schedule.json,
-// verificado em 2026-10-14). Volátil: reverificar a cada trimestre junto de stack-versoes.md.
+// verificado em 2026-11-03 em endoflife.date/api/nodejs.json, sem mudança de datas). Volátil: reverificar a cada trimestre junto de stack-versoes.md.
 const RUNTIME_EOL = {
   14: "2023-04-30", 16: "2023-09-11", 17: "2022-06-01", 18: "2025-04-30", 19: "2023-06-01",
   20: "2026-04-30", 21: "2024-06-01", 22: "2027-04-30", 23: "2025-06-01", 24: "2028-04-30",
@@ -142,6 +142,7 @@ function audit(o) {
     const eol = RUNTIME_EOL[major];
     if (major === null) warns.push(`não consegui ler o major de engines.node="${range}"`);
     else if (eol && eol <= today) blocks.push(`Node ${major} em EOL desde ${eol} (engines.node="${range}"): CVE sem patch — suba para uma LTS suportada`);
+    else if (!eol && major < 14) blocks.push(`Node ${major} anterior a toda a tabela de EOL embutida (14+): sem patch há anos — suba para uma LTS suportada`);
     else if (!eol) warns.push(`Node ${major} fora da tabela de EOL embutida: reverificar em references/stack-versoes.md`);
   }
 

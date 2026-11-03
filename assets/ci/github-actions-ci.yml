@@ -1,18 +1,31 @@
 # schematize-node — workflow de CI de referência (§13, §21, a `schematize-qa`, §35).
 # Copie para .github/workflows/ci.yml e ajuste <projeto>/comandos da sua stack.
 name: ci
+# Gatilho (piso 27 da engineering): CI remoto NÃO roda por commit nem por PR. O gate por commit é LOCAL
+# (pre-commit + scripts/check-*.sh). Este workflow roda só em dispatch manual e em tag de promoção (hml-*, v*).
 on:
-  pull_request:
-  push: { branches: [main] }
+  workflow_dispatch: {}
+  push:
+    tags: ['hml-*', 'v*']
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
 
 jobs:
   standards-gate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with: { fetch-depth: 0 }
       - name: Gate de padrões (DoD/§37) no diff
-        run: bash .claude/skills/schematize-node/scripts/check-diff.sh "origin/${{ github.base_ref || 'main' }}"
+        # Base = tag anterior (ou 1º commit): o que se acumulou desde a última promoção.
+        run: |
+          BASE="$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || git rev-list --max-parents=0 HEAD | tail -1)"
+          bash .claude/skills/schematize-node/scripts/check-diff.sh "$BASE"
+      - name: Gatilhos de CI deste repo (piso 27)
+        run: bash .claude/skills/schematize-node/scripts/check-ci-triggers.sh .
       - name: Índice de microfunções atualizado (§39)
         env:
           # Sem estes dois o gate NAO roda — e nao rodar REPROVA. Gate desarmado em silencio
@@ -24,7 +37,7 @@ jobs:
         run: bash .claude/skills/schematize-node/scripts/archive-secret-scan.sh .
 
   node-lint-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
@@ -43,18 +56,21 @@ jobs:
         run: node .claude/skills/schematize-node/scripts/node-audit.mjs --max-direct 40
 
   test-kit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-      - name: Smoke + security + authz + hardening (PR — a `schematize-qa` (gates de CI, `references/execucao.md` secao 6))
+      - name: Smoke + security + authz + hardening (a `schematize-qa`, `references/execucao.md` secao 6)
+        # PLACEHOLDER QUE FALHA DE PROPÓSITO: job verde que só faz `echo` é verde mentiroso.
+        # Troque a linha abaixo pelo CLI real do projeto, p.ex.:
+        #   <projeto> test smoke && <projeto> test security && <projeto> test authz && <projeto> test hardening
         run: |
-          # <projeto> test smoke && <projeto> test security && <projeto> test authz && <projeto> test hardening
-          echo "ligue ao CLI <projeto>_ops aqui"
+          echo "::error::test-kit não ligado ao CLI do projeto: edite este passo ou remova o job (decisão explícita)"
+          exit 1
       - name: Smoke self-check (anti verde-mentiroso — a `schematize-qa` (smoke e matriz simulated, `references/categorias.md` secoes 5 e 10))
         run: bash .claude/skills/schematize-node/scripts/smoke-selfcheck.sh --self-check
 
   security-scan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - name: Trivy fs

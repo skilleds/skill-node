@@ -14,14 +14,23 @@ BASE="${1:-origin/main}"
 FAIL=0
 RED=$'\033[0;31m'; YLW=$'\033[0;33m'; GRN=$'\033[0;32m'; RST=$'\033[0m'
 
-# Base inexistente NAO pode virar verde: `git diff` falha, FILES fica vazio e o gate diria OK sem ter olhado nada.
-if ! git rev-parse --verify -q "$BASE^{commit}" >/dev/null 2>&1; then
+# Modo do diff. `HEAD`/`--cached` = hook pré-commit: compara o INDEX com HEAD (antes `HEAD...HEAD` era vazio = "OK"
+# sempre, gate no-op no ponto por commit; achado P0-5 da revisão de 2026-10-31, mesmo furo do web).
+# Base inexistente OU igual a HEAD NAO pode virar verde: diff vazio por construção reprova (exit 1).
+MODE=range
+if [[ "$BASE" == "--cached" || "$BASE" == "HEAD" ]]; then
+  MODE=cached
+elif ! git rev-parse --verify -q "$BASE^{commit}" >/dev/null 2>&1; then
   echo "${RED}✗ BLOQUEIA${RST} base '$BASE' não resolve para um commit (ou não é repo git) — o gate não olhou nada"
   exit 1
+elif [[ "$(git rev-parse "$BASE^{commit}")" == "$(git rev-parse HEAD)" ]]; then
+  echo "${RED}✗ BLOQUEIA${RST} base '$BASE' == HEAD — diff vazio por construção, o gate não olhou nada (use --cached ou outra base)"
+  exit 1
 fi
+dn() { if [[ "$MODE" == cached ]]; then git diff --cached --name-only 2>/dev/null; else git diff --name-only "$BASE"...HEAD 2>/dev/null; fi; }
 
 # Arquivos de código alterados (exclui exceções da §6).
-mapfile -t FILES < <(git diff --name-only "$BASE"...HEAD 2>/dev/null \
+mapfile -t FILES < <(dn \
   | grep -E '\.(go|rs|ts|tsx|js|mjs|jsx)$' \
   | grep -vE '(_test\.|\.test\.|/migrations/|/generated/|\.gen\.|/mocks?/)' || true)
 
@@ -89,12 +98,12 @@ scan '\.(skip|only)\(|t\.Skip\(|xit\(|@Ignore' 'teste pulado/silenciado (§37)'
 
 # 3) §39 — índice atualizado quando muda funcionalidade
 if (( ${#FILES[@]} > 0 )); then
-  idx=$(git diff --name-only "$BASE"...HEAD 2>/dev/null | grep -E 'INDEX_(GLOBAL|FUNCTIONS)\.md' || true)
+  idx=$(dn | grep -E 'INDEX_(GLOBAL|FUNCTIONS)\.md' || true)
   [[ -z "$idx" ]] && warn "diff mexe em código mas não toca INDEX_*.md — índice atualizado? (§39)"
 fi
 
 # 4) §3 — backend novo em PHP
-php=$(git diff --name-only "$BASE"...HEAD 2>/dev/null | grep -E '\.php$' || true)
+php=$(dn | grep -E '\.php$' || true)
 [[ -n "$php" ]] && block "arquivo PHP no diff — PHP migra por funcionalidade quando tocado (schematize-engineering → references/linguagens.md §2): $php"
 
 echo

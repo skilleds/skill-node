@@ -44,6 +44,9 @@ echo "── engines.node ausente BLOQUEIA"
 mkdir -p "$W/noeng"; echo '{"name":"t"}' > "$W/noeng/package.json"; echo '{}' > "$W/noeng/package-lock.json"
 OUT=$(STUB_MODE=clean run --dir "$W/noeng"); check noeng 1 "engines.node" $? "$OUT"
 
+echo "── Node 12 (anterior à tabela) BLOQUEIA, não só avisa"
+mk "$W/n12" ">=12"; OUT=$(STUB_MODE=clean run --dir "$W/n12"); check n12 1 "anterior" $? "$OUT"
+
 echo "── Node EOL (>=18, EOL 2025-04-30) BLOQUEIA"
 mk "$W/eol" ">=18"; OUT=$(STUB_MODE=clean run --dir "$W/eol"); check eol 1 "EOL" $? "$OUT"
 
