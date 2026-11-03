@@ -5,6 +5,7 @@ com versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [0.16.0] — 2026-11-03
 ### Corrigido
+- `scripts/simulated/run.py`: passa no ruff da casa sem afrouxar nada — saída via `emit()` (sem `print`), esquema da URL validado (só http/https, erro claro) com teste em `run.test.sh`, `noqa` inútil removido, `datetime.UTC`, `ruff format`; comportamento preservado.
 - **P0** Template de CI: gatilho `workflow_dispatch` + tags `hml-*`/`v*`, `concurrency`, base = tag anterior; job `test-kit` deixou de ser um `echo` verde: falha (`exit 1`) até o CLI do projeto ser ligado.
 - **P0** `check-diff.sh`: `HEAD`/`--cached` comparam o INDEX (hook pre-commit era no-op); base == HEAD reprova. Hook usa `--cached`. Testes vermelhos plantados.
 - **P1** `node-audit.mjs`: major anterior a toda a tabela (Node <14) bloqueia, não só avisa.
