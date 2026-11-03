@@ -163,3 +163,5 @@ Mesmos das skills irmãs do rol — leia o reference; **aplicados ao que você t
 | Dados e eventos: banco, mensageria, cache, APIs, resiliência, jobs (do que você toca) | `references/dados-eventos.md` |
 | Entrega: templates, feature flags, IA assistida, DoD, índice (§29+) | `references/entrega.md` |
 | Operação: config, deploy, git/PR, runbooks, ADR, archive (§20–28) | `references/operacao.md` |
+
+Herda os pisos 22–29 da `schematize-engineering` (git como trava de conclusão, deploy só do git, ops é o gate da IA, sem agents inúteis, relatório 30 min/handoff 6 h, CI remoto só antes do hml, microserviço autônomo, build em dev/hml + higiene).

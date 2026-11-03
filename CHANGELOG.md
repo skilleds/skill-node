@@ -3,6 +3,18 @@
 Todas as mudanças relevantes deste pacote, no formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/),
 com versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+### Corrigido
+- **P0** Template de CI: gatilho `workflow_dispatch` + tags `hml-*`/`v*`, `concurrency`, base = tag anterior; job `test-kit` deixou de ser um `echo` verde: falha (`exit 1`) até o CLI do projeto ser ligado.
+- **P0** `check-diff.sh`: `HEAD`/`--cached` comparam o INDEX (hook pre-commit era no-op); base == HEAD reprova. Hook usa `--cached`. Testes vermelhos plantados.
+- **P1** `node-audit.mjs`: major anterior a toda a tabela (Node <14) bloqueia, não só avisa.
+- Docs: `testes.md` ganha matriz de acesso (piso 20) e os 7 testes de resiliência (piso 28).
+- Versões (fonte: `endoflife.date/api/nodejs.json`, 2026-11-03): Node 26 LTS desde 2026-10-28, 24 em manutenção, 20 EOL.
+- Pisos 22–29 da `schematize-engineering` herdados por ponteiro em `SKILL.md` e `assets/CLAUDE.md` (o texto completo vem do sync de herdados).
+- `scripts/check-ci-triggers.sh` (+ teste) distribuído da engineering; `scripts/ci-template.test.sh` roda a regra sobre o template e o hook da própria skill.
+### Em espera `[~]`
+- Política Node em saída/"só frontend": gate de "Node novo" (P1-5), description/fronteira com web (P1-17).
+
 ## [0.15.0] — 2026-10-14
 Gate da skill-dev verde, ponteiros para as skills novas e testes dos scripts.
 

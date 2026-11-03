@@ -1,7 +1,7 @@
 # Anexo A — números voláteis (limiares e versões)
 
 > Parte da skill **schematize-node**. **Fonte volátil** — versões e limiares mudam. Atualize aqui (revisão trimestral) sem mexer no corpo normativo. **Verificado em: 2026-10-14**. Sempre confirme o número atual antes de aplicar como gate.
-> Conferido em 2026-10-14 no `nodejs.org/dist/index.json` e no `schedule.json` oficial (`github.com/nodejs/Release`): **LTS Active = 24 (Krypton, 24.21.0)**, que entra em *Maintenance* em 2026-10-20 (EOL 2028-04-30); **22 (Jod, 22.23.3)** em *Maintenance* (EOL 2027-04-30); **26 (26.11.1) é *Current*, ainda NÃO-LTS — vira LTS em 2026-10-28** (EOL 2029-04-30); **20 (Iron) está em EOL desde 2026-04-30** e 18 (Hydrogen) desde 2025-04-30 — rodar neles é brecha sem patch. 25 foi *Current* ímpar (EOL 2026-06-01). Releia o `schedule.json` antes de pinar: as datas mudam o que é "LTS alvo".
+> Conferido em 2026-11-03 em `endoflife.date/api/nodejs.json` (espelha o `schedule.json` oficial de `github.com/nodejs/Release`): **26 (Lithium) é LTS desde 2026-10-28** (EOL 2029-04-30) e é o alvo de produção; **24 (Krypton)** em *Maintenance* (EOL 2028-04-30); **22 (Jod)** em *Maintenance* (EOL 2027-04-30); **20 (Iron) EOL desde 2026-04-30** e 18 desde 2025-04-30: rodar neles é brecha sem patch. Releia o `schedule.json` antes de pinar: as datas mudam o que é "LTS alvo".
 
 ## Node runtime
 

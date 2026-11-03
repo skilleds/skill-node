@@ -40,6 +40,14 @@ npm test -- --run                    # o que o CI chama
 - **Property-based:** `fast-check`. **Mutation:** Stryker.
 - **`testcontainers`** para banco; `nock`/`msw` para HTTP — nunca bater na rede real no CI.
 
+## Matriz de acesso por rota (piso 20)
+
+Rota legada **tocada** ou nova ganha teste das 4 personas (anônimo, não privilegiado, privilegiado, burlas), conferindo status e corpo; deny-by-default e M == N. Em supertest: `await request(app).get('/pedidos/42').expect(401)` anônimo; `.expect(403)` sem privilégio; `.expect(200)` para o dono; `.expect(404)` para o ID de outro tenant. Escopo-diff: "tocou, ganha teste". Ver `schematize-qa` e `schematize-pentest`.
+
+## Resiliência do serviço (piso 28)
+
+Serviço Node legado que vizinha com outros serviços tem, no CI, os 7 testes (em `node:test` ou vitest, com `testcontainers` para fila/banco), cada um com dependência real derrubada: (1) boot com todas as dependências indisponíveis; (2) timeout/5xx/conexão recusada manda o item para a fila durável (outbox/inbox em DB ou Redis, **nunca memória**) e o serviço segue saudável; (3) reiniciar com fila cheia drena sem perda nem duplicata; (4) reentrega idempotente; (5) mensagem envenenada vai para a DLQ após N tentativas; (6) `SIGTERM` drena o em voo sem perder item; (7) crash entre persistir e confirmar não perde dado (ack só após commit). Matriz M == N em `resilience.yml`; gate `check-resilience.sh` da `schematize-engineering`.
+
 ## Onde divergir da base, a base manda
 
 O piso é o mesmo: teste é **visto falhar no vermelho** antes de valer; cobertura é **contrato**

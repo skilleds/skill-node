@@ -76,3 +76,5 @@ vai)** / **MAPA e índice** — a *qualidade* (doc-comment, gates) é **no que v
 - **Todo MD gerado mora no archive, nunca no root** (§28): MAPA, índices, planos, relatórios, handoffs, checkpoints → `<projeto>_archive/<área>/`. O root fica limpo (código, config e os MDs de projeto mantidos à mão: README, `CLAUDE.md`, LICENSE). Antes de gravar um `.md`, o caminho começa com `<projeto>_archive/`.
 
 Lista completa de anti-padrões: `references/anti-padroes.md` (§37) da skill.
+
+Herda os pisos 22–29 da `schematize-engineering` (git como trava de conclusão, deploy só do git, ops é o gate da IA, sem agents inúteis, relatório 30 min/handoff 6 h, CI remoto só antes do hml, microserviço autônomo, build em dev/hml + higiene).
